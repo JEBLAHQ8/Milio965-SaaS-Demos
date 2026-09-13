@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PortfolioPilot AI — Product Tour (Sample Data)</title>
+<style>
+  :root{
+    --bg:#0a0e17; --surface:#10182a; --surface-alt:#141f36; --border:#223046;
+    --text:#e7edf5; --muted:#7d8aa3; --cyan:#22d3ee; --gold:#eab308;
+    --green:#34d399; --red:#f87171;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,'Segoe UI',ui-sans-serif,system-ui,sans-serif;}
+  .mono{font-family:ui-monospace,'SFMono-Regular','IBM Plex Mono',Menlo,Consolas,monospace;}
+
+  .demo-banner{background:linear-gradient(90deg,#eab308,#f59e0b);color:#1a1400;
+    text-align:center;padding:9px 12px;font-size:13px;font-weight:600;}
+
+  .shell{display:flex;min-height:calc(100vh - 38px);}
+  .rail{width:180px;background:var(--surface);border-right:1px solid var(--border);
+    padding:20px 10px;flex-shrink:0;}
+  .rail .logo-row{display:flex;align-items:center;gap:9px;padding:0 8px 20px;}
+  .rail .logo{width:28px;height:28px;border-radius:7px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--cyan),var(--gold));
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#04141c;font-size:12px;}
+  .rail .logo-row b{font-size:13.5px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+    color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:2px;border:1px solid transparent;}
+  .nav-item .ic{width:16px;text-align:center;font-size:13px;}
+  .nav-item:hover{background:var(--surface-alt);color:var(--text);}
+  .nav-item.active{background:rgba(34,211,238,.09);border-color:rgba(34,211,238,.3);color:var(--text);}
+
+  .main{flex:1;padding:26px 34px 50px;max-width:1180px;overflow:hidden;}
+  .section{display:none;}
+  .section.active{display:block;}
+
+  .page-head{margin-bottom:22px;}
+  .page-head h2{font-size:19px;margin:0 0 6px;font-weight:600;}
+  .page-head p{color:var(--muted);font-size:13px;margin:0;max-width:640px;line-height:1.6;}
+
+  .status-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(52,211,153,.1);
+    border:1px solid rgba(52,211,153,.35);color:var(--green);border-radius:20px;
+    padding:6px 13px;font-size:12.5px;font-weight:600;float:right;margin-top:-2px;}
+  .status-pill .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55);}70%{box-shadow:0 0 0 7px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
+
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .kpi .label{color:var(--muted);font-size:12px;margin-bottom:8px;}
+  .kpi .value{font-size:22px;font-weight:600;}
+  .kpi .delta{font-size:12.5px;margin-top:6px;}
+  .up{color:var(--green);} .down{color:var(--red);}
+
+  .section-title{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  .strategy-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:10px;}
+  .strategy{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .strategy .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .strategy .head h3{font-size:14.5px;margin:0;font-weight:600;}
+  .tag{font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid var(--border);color:var(--muted);}
+  .strategy .asset{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
+  .strategy .pnl{font-size:24px;font-weight:600;margin-bottom:6px;}
+  .strategy .sub{font-size:12px;color:var(--muted);}
+  .bar-track{height:5px;background:var(--surface-alt);border-radius:4px;margin-top:14px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;}
+  .strategy .logic{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+    font-size:12px;color:#aab6cc;line-height:1.6;}
+  .strategy .logic b{color:var(--text);}
+
+  .grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px;}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .panel h3{font-size:14.5px;margin:0 0 16px;font-weight:600;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;color:var(--muted);font-weight:500;font-size:11.5px;
+    padding:0 10px 10px 0;border-bottom:1px solid var(--border);}
+  td{padding:9px 10px 9px 0;border-bottom:1px solid rgba(34,48,70,.5);}
+  tr:last-child td{border-bottom:none;}
+  .side-buy{color:var(--green);font-weight:600;} .side-sell{color:var(--red);font-weight:600;}
+
+  .risk-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;
+    border-bottom:1px solid rgba(34,48,70,.5);font-size:13px;}
+  .risk-row:last-child{border-bottom:none;}
+  .risk-row .k{color:var(--muted);} .risk-row .v{font-weight:600;}
+
+  .breaker{margin-top:18px;padding:14px 16px;border-radius:10px;background:rgba(34,211,238,.07);
+    border:1px solid rgba(34,211,238,.25);display:flex;gap:12px;align-items:flex-start;}
+  .breaker .icon{width:26px;height:26px;border-radius:7px;background:rgba(34,211,238,.18);
+    color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+  .breaker .t{font-size:12.8px;line-height:1.5;color:#c7d3e5;}
+  .breaker .t b{color:var(--text);}
+
+  /* Architecture section */
+  .stack-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+  .chip{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;
+    padding:8px 14px;font-size:12.5px;display:flex;align-items:center;gap:7px;}
+  .chip .sw{width:8px;height:8px;border-radius:50%;}
+  .schema{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .model{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;margin-bottom:10px;}
+  .model .name{font-weight:600;font-size:13px;color:var(--cyan);margin-bottom:6px;}
+  .model .fields{font-size:11.5px;color:var(--muted);line-height:1.7;}
+
+  /* Setup guide */
+  .steps{counter-reset:step;}
+  .step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
+  .step:last-child{border-bottom:none;}
+  .step .num{counter-increment:step;width:26px;height:26px;border-radius:50%;flex-shrink:0;
+    background:var(--surface-alt);border:1px solid var(--border);display:flex;
+    align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold);}
+  .step .num::before{content:counter(step);}
+  .step h4{margin:0 0 5px;font-size:13.5px;}
+  .step p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+  .footer-note{color:var(--muted);font-size:11.5px;text-align:center;margin-top:26px;}
+
+  @media (max-width:900px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .strategy-row{grid-template-columns:1fr;}
+    .grid-2{grid-template-columns:1fr;}
+    .rail{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">⚠ PRODUCT TOUR — Sample data throughout. This walks through every screen included in the PortfolioPilot AI source-code package.</div>
+
+<div class="shell">
+  <div class="rail">
+    <div class="logo-row"><div class="logo">PP</div><b>PortfolioPilot</b></div>
+    <div class="nav-item active" data-tab="overview"><span class="ic">▤</span> Dashboard</div>
+    <div class="nav-item" data-tab="strategies"><span class="ic">≈</span> Strategies</div>
+    <div class="nav-item" data-tab="risk"><span class="ic">⛨</span> Risk &amp; Safety</div>
+    <div class="nav-item" data-tab="trades"><span class="ic">☰</span> Trade Log</div>
+    <div class="nav-item" data-tab="architecture"><span class="ic">⌗</span> Architecture</div>
+    <div class="nav-item" data-tab="setup"><span class="ic">→</span> Setup Guide</div>
+  </div>
+
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="overview">
+      <div class="page-head">
+        <div class="status-pill"><span class="pulse"></span> Circuit Breaker: Armed</div>
+        <h2>Dashboard Overview</h2>
+        <p>The main screen a trader sees on login — a live snapshot of portfolio value, daily performance, and every strategy running, all in one view.</p>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">Portfolio Value</div><div class="value mono">$128,940.12</div><div class="delta up">▲ 2.34% today</div></div>
+        <div class="kpi"><div class="label">Day P&amp;L</div><div class="value mono up">+$2,961.40</div><div class="delta">Across 3 strategies</div></div>
+        <div class="kpi"><div class="label">Open Positions</div><div class="value mono">7</div><div class="delta">Stocks 3 · Funds 2 · Crypto 2</div></div>
+        <div class="kpi"><div class="label">Max Drawdown (30d)</div><div class="value mono">-4.8%</div><div class="delta">Within risk limit</div></div>
+      </div>
+      <h3 class="section-title">Strategy modules at a glance</h3>
+      <div class="strategy-row">
+        <div class="strategy"><div class="head"><h3>Momentum — Stocks</h3><span class="tag">Active</span></div>
+          <div class="asset">Tracks breakout strength across large-cap equities</div>
+          <div class="pnl up">+$1,204.80</div><div class="sub">3 open positions · win rate 64%</div>
+          <div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--green);"></div></div>
+        </div>
+        <div class="strategy"><div class="head"><h3>Rebalancing — Funds</h3><span class="tag">Active</span></div>
+          <div class="asset">Keeps ETF allocation within target weight bands</div>
+          <div class="pnl up">+$612.15</div><div class="sub">2 open positions · last rebalance 2d ago</div>
+          <div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--gold);"></div></div>
+        </div>
+        <div class="strategy"><div class="head"><h3>Volatility Bands — Crypto</h3><span class="tag">Active</span></div>
+          <div class="asset">Trades range breakouts on BTC / ETH volatility bands</div>
+          <div class="pnl up">+$1,144.45</div><div class="sub">2 open positions · win rate 58%</div>
+          <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--cyan);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRATEGIES -->
+    <div class="section" id="strategies">
+      <div class="page-head">
+        <h2>Strategy Modules — How Each One Thinks</h2>
+        <p>Three independently-tested strategy modules ship with the package, each isolated so you can enable, disable, or tune them without touching the others.</p>
+      </div>
+      <div class="strategy-row">
+        <div class="strategy"><div class="head"><h3>Momentum — Stocks</h3><span class="tag">Active</span></div>
+          <div class="asset">Tracks breakout strength across large-cap equities</div>
+          <div class="pnl up">+$1,204.80</div><div class="sub">3 open positions · win rate 64%</div>
+          <div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--green);"></div></div>
+          <div class="logic"><b>Logic:</b> enters when price breaks above a rolling high with rising volume; exits on momentum reversal or a trailing stop.</div>
+        </div>
+        <div class="strategy"><div class="head"><h3>Rebalancing — Funds</h3><span class="tag">Active</span></div>
+          <div class="asset">Keeps ETF allocation within target weight bands</div>
+          <div class="pnl up">+$612.15</div><div class="sub">2 open positions · last rebalance 2d ago</div>
+          <div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--gold);"></div></div>
+          <div class="logic"><b>Logic:</b> monitors drift from target allocation weights; trims and adds positions once drift crosses a configurable threshold.</div>
+        </div>
+        <div class="strategy"><div class="head"><h3>Volatility Bands — Crypto</h3><span class="tag">Active</span></div>
+          <div class="asset">Trades range breakouts on BTC / ETH volatility bands</div>
+          <div class="pnl up">+$1,144.45</div><div class="sub">2 open positions · win rate 58%</div>
+          <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--cyan);"></div></div>
+          <div class="logic"><b>Logic:</b> builds dynamic volatility bands (ATR-based); enters on confirmed breakout beyond the band, sized down in high-volatility regimes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RISK -->
+    <div class="section" id="risk">
+      <div class="page-head">
+        <h2>Risk &amp; Safety Layer</h2>
+        <p>A rules-based risk layer that sits between every strategy and the broker — hard numeric limits, not model interpretation.</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Position sizing &amp; limits</h3>
+          <div class="risk-row"><span class="k">Max risk per trade</span><span class="v mono">1.5%</span></div>
+          <div class="risk-row"><span class="k">Max daily loss limit</span><span class="v mono">3.0%</span></div>
+          <div class="risk-row"><span class="k">Max concurrent positions</span><span class="v mono">8</span></div>
+          <div class="risk-row"><span class="k">Stop-loss mode</span><span class="v mono">ATR-based</span></div>
+          <div class="risk-row"><span class="k">Max exposure per asset class</span><span class="v mono">40%</span></div>
+        </div>
+        <div class="panel">
+          <h3>Circuit breaker</h3>
+          <div class="breaker">
+            <div class="icon">⏻</div>
+            <div class="t"><b>Runs outside the AI model's control.</b> It's plain code, not a prompt — the model cannot override it. If the daily loss limit is hit, every strategy pauses automatically and stays paused until a human manually reviews and re-arms it.</div>
+          </div>
+          <div class="breaker" style="margin-top:12px;">
+            <div class="icon">◧</div>
+            <div class="t"><b>Explainable, not a black box.</b> Every stop-loss and position size is a fixed formula you can read in the source — no hidden logic.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRADE LOG -->
+    <div class="section" id="trades">
+      <div class="page-head">
+        <h2>Trade Log</h2>
+        <p>A full, filterable history of every order the framework has placed, with the strategy responsible for each one — the same table your database schema stores.</p>
+      </div>
+      <div class="panel">
+        <table>
+          <tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Price</th><th>Strategy</th><th>Status</th></tr>
+          <tr><td class="mono">10:42</td><td class="mono">NVDA</td><td class="side-buy">BUY</td><td class="mono">12</td><td class="mono">$187.20</td><td>Momentum</td><td class="mono">Filled</td></tr>
+          <tr><td class="mono">10:15</td><td class="mono">BTC/USD</td><td class="side-sell">SELL</td><td class="mono">0.08</td><td class="mono">$71,340</td><td>Volatility</td><td class="mono">Filled</td></tr>
+          <tr><td class="mono">09:58</td><td class="mono">VTI</td><td class="side-buy">BUY</td><td class="mono">6</td><td class="mono">$268.90</td><td>Rebalance</td><td class="mono">Filled</td></tr>
+          <tr><td class="mono">09:31</td><td class="mono">ETH/USD</td><td class="side-buy">BUY</td><td class="mono">0.6</td><td class="mono">$3,412</td><td>Volatility</td><td class="mono">Filled</td></tr>
+          <tr><td class="mono">09:02</td><td class="mono">AAPL</td><td class="side-sell">SELL</td><td class="mono">8</td><td class="mono">$226.55</td><td>Momentum</td><td class="mono">Filled</td></tr>
+          <tr><td class="mono">08:47</td><td class="mono">QQQ</td><td class="side-buy">BUY</td><td class="mono">4</td><td class="mono">$412.10</td><td>Rebalance</td><td class="mono">Filled</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section" id="architecture">
+      <div class="page-head">
+        <h2>Technical Architecture</h2>
+        <p>What's actually inside the package — the real stack and database schema, not a black-box binary.</p>
+      </div>
+      <div class="stack-row">
+        <div class="chip"><span class="sw" style="background:var(--cyan);"></span>Next.js 14</div>
+        <div class="chip"><span class="sw" style="background:var(--gold);"></span>TypeScript</div>
+        <div class="chip"><span class="sw" style="background:var(--green);"></span>Prisma ORM</div>
+        <div class="chip"><span class="sw" style="background:#a78bfa;"></span>Claude AI + MCP</div>
+      </div>
+      <div class="schema">
+        <h3 style="margin-top:0;font-size:14.5px;">Database schema (Prisma)</h3>
+        <div class="model"><div class="name">Strategy</div><div class="fields">id · name · assetClass · status · config (JSON) · createdAt</div></div>
+        <div class="model"><div class="name">Trade</div><div class="fields">id · strategyId → Strategy · symbol · side · qty · price · status · executedAt</div></div>
+        <div class="model"><div class="name">RiskLimit</div><div class="fields">id · maxRiskPerTrade · maxDailyLoss · maxPositions · updatedAt</div></div>
+        <div class="model"><div class="name">CircuitBreakerEvent</div><div class="fields">id · triggeredAt · reason · dailyLossAtTrigger · resolvedAt</div></div>
+      </div>
+    </div>
+
+    <!-- SETUP -->
+    <div class="section" id="setup">
+      <div class="page-head">
+        <h2>Setup Guide</h2>
+        <p>The exact path from downloading the package to a running dashboard, taken from the included README.</p>
+      </div>
+      <div class="panel steps">
+        <div class="step"><div class="num"></div><div><h4>Install dependencies</h4><p>Run the package install command to pull in Next.js, Prisma, and all required libraries.</p></div></div>
+        <div class="step"><div class="num"></div><div><h4>Configure your database</h4><p>Point Prisma at a database (a free-tier option works for testing) and run the included migration to create all tables.</p></div></div>
+        <div class="step"><div class="num"></div><div><h4>Add your broker API keys</h4><p>Enter your own broker credentials in the environment file to enable real order placement — the framework never ships with any keys of its own.</p></div></div>
+        <div class="step"><div class="num"></div><div><h4>Review and adjust risk limits</h4><p>Set your own max risk per trade, daily loss limit, and position caps before enabling any strategy live.</p></div></div>
+        <div class="step"><div class="num"></div><div><h4>Run in paper mode first</h4><p>Start with paper trading to confirm behavior matches your expectations before connecting real funds.</p></div></div>
+        <div class="step"><div class="num"></div><div><h4>Go live</h4><p>Switch to live mode once you're confident — the dashboard, risk layer, and circuit breaker all work identically in both modes.</p></div></div>
+      </div>
+    </div>
+
+    <p class="footer-note">This tour uses static sample data to illustrate every screen included in the PortfolioPilot AI source-code package. No live broker is connected here.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach(function(item){
+    item.addEventListener('click', function(){
+      document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
+      document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+      item.classList.add('active');
+      document.getElementById(item.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
